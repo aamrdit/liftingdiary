@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-Content \"C:\\\\Users\\\\aamir\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Workspace-liftingdiary\\\\be7ebbbe-4367-4747-b820-be0a6f4dec06\\\\tasks\\\\bj4ngrmd6.output\" -Wait)",
+      "Bash(Select-String --line-buffered \"Ready|Error|error|localhost|warn\")",
+      "WebFetch(domain:localhost)"
+    ]
+  }
+}
