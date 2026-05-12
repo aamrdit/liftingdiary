@@ -1,6 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import { Suspense } from "react";
 import { DatePicker } from "./_components/date-picker";
 import { WorkoutList } from "./_components/workout-list";
 
@@ -9,9 +6,6 @@ export default async function DashboardPage({
 }: {
   searchParams: Promise<{ date?: string }>;
 }) {
-  const { userId } = await auth();
-  if (!userId) redirect("/");
-
   const { date } = await searchParams;
   const today = new Date().toISOString().split("T")[0];
   const selectedDate = date ?? today;
@@ -22,21 +16,7 @@ export default async function DashboardPage({
         <h1 className="text-xl font-bold tracking-tight">My Workouts</h1>
         <DatePicker date={selectedDate} />
       </div>
-      <Suspense
-        key={selectedDate}
-        fallback={
-          <div className="space-y-4">
-            {[0, 1].map((i) => (
-              <div
-                key={i}
-                className="h-40 rounded-lg bg-gray-100 dark:bg-gray-800 animate-pulse"
-              />
-            ))}
-          </div>
-        }
-      >
-        <WorkoutList userId={userId} date={selectedDate} />
-      </Suspense>
+      <WorkoutList date={selectedDate} />
     </main>
   );
 }

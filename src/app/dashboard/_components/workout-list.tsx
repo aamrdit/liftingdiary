@@ -1,39 +1,61 @@
-import { db } from "@/src/db";
-import { workouts } from "@/src/db/schema";
-import { and, eq, gte, lt } from "drizzle-orm";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { format } from "date-fns";
+
+const MOCK_WORKOUTS = [
+  {
+    id: "1",
+    name: "Push Day",
+    startedAt: new Date("2026-05-11T09:00:00"),
+    completedAt: new Date("2026-05-11T10:15:00"),
+    workoutExercises: [
+      {
+        id: "we1",
+        exercise: { name: "Bench Press" },
+        sets: [
+          { id: "s1", setNumber: 1, reps: 8, weightKg: 80, completed: true },
+          { id: "s2", setNumber: 2, reps: 8, weightKg: 80, completed: true },
+          { id: "s3", setNumber: 3, reps: 6, weightKg: 82.5, completed: true },
+        ],
+      },
+      {
+        id: "we2",
+        exercise: { name: "Overhead Press" },
+        sets: [
+          { id: "s4", setNumber: 1, reps: 10, weightKg: 50, completed: true },
+          { id: "s5", setNumber: 2, reps: 10, weightKg: 50, completed: true },
+          { id: "s6", setNumber: 3, reps: 8, weightKg: 52.5, completed: false },
+        ],
+      },
+    ],
+  },
+  {
+    id: "2",
+    name: "Core Finisher",
+    startedAt: new Date("2026-05-11T10:30:00"),
+    completedAt: new Date("2026-05-11T10:50:00"),
+    workoutExercises: [
+      {
+        id: "we3",
+        exercise: { name: "Plank" },
+        sets: [
+          { id: "s7", setNumber: 1, reps: null, weightKg: null, completed: true },
+          { id: "s8", setNumber: 2, reps: null, weightKg: null, completed: true },
+        ],
+      },
+    ],
+  },
+];
 
 type Props = {
-  userId: string;
   date: string;
 };
 
-export async function WorkoutList({ userId, date }: Props) {
-  const start = new Date(date);
-  const end = new Date(date);
-  end.setUTCDate(end.getUTCDate() + 1);
+export function WorkoutList({ date }: Props) {
+  const workouts = MOCK_WORKOUTS;
 
-  const results = await db.query.workouts.findMany({
-    where: and(
-      eq(workouts.userId, userId),
-      gte(workouts.startedAt, start),
-      lt(workouts.startedAt, end)
-    ),
-    with: {
-      workoutExercises: {
-        orderBy: (we, { asc }) => asc(we.order),
-        with: {
-          exercise: true,
-          sets: {
-            orderBy: (s, { asc }) => asc(s.setNumber),
-          },
-        },
-      },
-    },
-  });
-
-  if (results.length === 0) {
+  if (workouts.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-gray-400 dark:text-gray-500">
+      <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
         <p className="text-base">No workouts logged for this date.</p>
       </div>
     );
@@ -41,38 +63,26 @@ export async function WorkoutList({ userId, date }: Props) {
 
   return (
     <div className="space-y-4">
-      {results.map((workout) => (
-        <div
-          key={workout.id}
-          className="rounded-lg border border-gray-200 dark:border-gray-700 p-5"
-        >
-          <div className="flex items-baseline justify-between mb-4">
-            <h2 className="text-base font-semibold">
-              {workout.name ?? "Workout"}
-            </h2>
-            <span className="text-xs text-gray-400 dark:text-gray-500">
-              {workout.startedAt.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-              {workout.completedAt &&
-                ` – ${workout.completedAt.toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}`}
-            </span>
-          </div>
-
-          <div className="space-y-4">
+      {workouts.map((workout) => (
+        <Card key={workout.id}>
+          <CardHeader className="pb-3">
+            <div className="flex items-baseline justify-between">
+              <CardTitle className="text-base">{workout.name ?? "Workout"}</CardTitle>
+              <span className="text-xs text-muted-foreground">
+                {format(workout.startedAt, "h:mm a")}
+                {workout.completedAt &&
+                  ` – ${format(workout.completedAt, "h:mm a")}`}
+              </span>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
             {workout.workoutExercises.map((we) => (
               <div key={we.id}>
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {we.exercise.name}
-                </p>
+                <p className="text-sm font-medium mb-2">{we.exercise.name}</p>
                 {we.sets.length > 0 && (
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="text-left text-xs text-gray-400 dark:text-gray-500">
+                      <tr className="text-left text-xs text-muted-foreground">
                         <th className="pr-6 pb-1 font-normal">Set</th>
                         <th className="pr-6 pb-1 font-normal">Reps</th>
                         <th className="pr-6 pb-1 font-normal">Weight (kg)</th>
@@ -81,18 +91,13 @@ export async function WorkoutList({ userId, date }: Props) {
                     </thead>
                     <tbody>
                       {we.sets.map((set) => (
-                        <tr
-                          key={set.id}
-                          className="text-gray-600 dark:text-gray-400"
-                        >
+                        <tr key={set.id} className="text-muted-foreground">
                           <td className="pr-6 py-0.5">{set.setNumber}</td>
                           <td className="pr-6 py-0.5">{set.reps ?? "–"}</td>
                           <td className="pr-6 py-0.5">{set.weightKg ?? "–"}</td>
                           <td className="py-0.5">
                             {set.completed ? (
-                              <span className="text-green-600 dark:text-green-400">
-                                ✓
-                              </span>
+                              <span className="text-green-600 dark:text-green-400">✓</span>
                             ) : (
                               "–"
                             )}
@@ -104,8 +109,8 @@ export async function WorkoutList({ userId, date }: Props) {
                 )}
               </div>
             ))}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       ))}
     </div>
   );
