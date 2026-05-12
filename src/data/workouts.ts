@@ -2,6 +2,17 @@ import { db } from "@/src/db";
 import { workouts } from "@/src/db/schema";
 import { and, eq, sql } from "drizzle-orm";
 
+export async function createWorkout(
+  userId: string,
+  data: { name?: string; startedAt: Date }
+) {
+  const [workout] = await db
+    .insert(workouts)
+    .values({ userId, name: data.name, startedAt: data.startedAt })
+    .returning();
+  return workout;
+}
+
 export async function getWorkoutsForUserByDate(userId: string, date: string) {
   return db.query.workouts.findMany({
     where: and(

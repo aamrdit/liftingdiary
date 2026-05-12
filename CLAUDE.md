@@ -10,6 +10,8 @@ Before writing any code, **always** check the `/docs` directory for a relevant g
 
 - /docs/ui.md
 - /docs/data-fetching.md
+- /docs/data-mutations.md
+- /docs/auth.md
 
 ## Commands
 
