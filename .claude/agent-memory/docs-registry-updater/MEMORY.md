@@ -1,0 +1,1 @@
+- [CLAUDE.md Docs Registry Structure](project_claude_md_structure.md) — section heading, bullet format (no descriptions), append-order convention for liftingdiary
