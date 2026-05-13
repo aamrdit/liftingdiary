@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
@@ -22,7 +23,8 @@ export function WorkoutList({ workouts, formattedDate }: Props) {
       ) : (
         <div className="space-y-4">
           {workouts.map((workout) => (
-            <Card key={workout.id}>
+            <Link key={workout.id} href={`/dashboard/workout/${workout.id}`} className="block">
+            <Card className="hover:bg-accent transition-colors cursor-pointer">
               <CardHeader className="pb-3">
                 <div className="flex items-baseline justify-between">
                   <CardTitle className="text-base">{workout.name ?? "Workout"}</CardTitle>
@@ -69,6 +71,7 @@ export function WorkoutList({ workouts, formattedDate }: Props) {
                 ))}
               </CardContent>
             </Card>
+            </Link>
           ))}
         </div>
       )}
