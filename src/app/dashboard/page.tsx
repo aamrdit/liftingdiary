@@ -1,9 +1,11 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { format } from "date-fns";
+import Link from "next/link";
 import { getWorkoutsForUserByDate } from "@/src/data/workouts";
 import { DatePicker } from "./_components/date-picker";
 import { WorkoutList } from "./_components/workout-list";
+import { Button } from "@/components/ui/button";
 
 export default async function DashboardPage({
   searchParams,
@@ -22,10 +24,15 @@ export default async function DashboardPage({
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">
       <h1 className="text-3xl font-semibold tracking-tight text-center mb-8">Workout Dashboard</h1>
-      <div className="grid grid-cols-[auto_1fr] gap-8 items-start">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground mb-3">Select Date</p>
-          <DatePicker date={selectedDate} />
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-muted-foreground">Select Date</span>
+            <DatePicker date={selectedDate} />
+          </div>
+          <Button asChild>
+            <Link href="/dashboard/workout/new">Log New Workout</Link>
+          </Button>
         </div>
         <WorkoutList workouts={workouts} formattedDate={formattedDate} />
       </div>

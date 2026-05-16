@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import type { WorkoutsForDay } from "@/src/data/workouts";
 
@@ -15,9 +14,8 @@ export function WorkoutList({ workouts, formattedDate }: Props) {
       <h2 className="text-xl font-semibold tracking-tight mb-4">Workouts for {formattedDate}</h2>
       {workouts.length === 0 ? (
         <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12 gap-4">
+          <CardContent className="flex flex-col items-center justify-center py-12">
             <p className="text-muted-foreground">No workouts logged for this date.</p>
-            <Button>Log New Workout</Button>
           </CardContent>
         </Card>
       ) : (
